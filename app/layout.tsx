@@ -3,34 +3,28 @@ import './globals.css';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 import { sanityFetch } from '@/lib/sanity';
-import { SITE_SETTINGS_QUERY } from '@/lib/queries';
+import { SITE_CONTENT_QUERY } from '@/lib/queries';
+import type { SiteContent } from '@/lib/types';
 
 export const dynamic = 'force-dynamic';
 
-interface SiteSettings {
-  businessName: string;
-  tagline: string;
-  announcement: { active: boolean; message: string };
-  seo?: { title?: string; description?: string };
-}
-
 export async function generateMetadata(): Promise<Metadata> {
-  const settings = await sanityFetch<SiteSettings>(SITE_SETTINGS_QUERY);
+  const site = await sanityFetch<SiteContent>(SITE_CONTENT_QUERY);
   return {
-    title: settings?.seo?.title || settings?.businessName || 'Petal Beauty MK',
-    description: settings?.seo?.description || settings?.tagline || 'Professional beauty treatments in Milton Keynes',
+    title: site?.seo?.metaTitle || site?.heroSection?.headline || 'Petal Beauty MK',
+    description: site?.seo?.metaDescription || site?.heroSection?.subheading || 'Professional beauty treatments in Milton Keynes',
   };
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const settings = await sanityFetch<SiteSettings>(SITE_SETTINGS_QUERY);
-  const businessName = settings?.businessName || 'Petal Beauty MK';
-  const announcement = settings?.announcement;
+  const site = await sanityFetch<SiteContent>(SITE_CONTENT_QUERY);
+  const businessName = site?.heroSection?.headline || 'Petal Beauty MK';
+  const announcement = site?.announcement;
 
   return (
     <html lang="en">
       <body>
-        {announcement?.active && announcement.message && (
+        {announcement?.visible && announcement.text && (
           <div style={{
             background: 'var(--pink-dark)',
             color: '#fff',
@@ -40,7 +34,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             fontFamily: 'sans-serif',
             letterSpacing: '0.3px',
           }}>
-            {announcement.message}
+            {announcement.text}
           </div>
         )}
         <Nav businessName={businessName} />
