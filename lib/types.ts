@@ -12,6 +12,7 @@ export interface SiteContent {
   awards: Array<{ name: string; year?: number; description?: string }>;
   faqs: Array<{ question: string; answer: string; visible: boolean }>;
   galleryPhotos: Array<{ caption?: string; category?: string; imageUrl?: string }>;
+  galleryVideos: Array<{ caption?: string; videoUrl?: string }>;
   socialLinks: { instagram?: string; facebook?: string; tiktok?: string };
   seo: { metaTitle?: string; metaDescription?: string; keywords?: string };
 }
